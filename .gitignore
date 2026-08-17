@@ -1,0 +1,6 @@
+.env
+.mcp.json
+.claude/trash/
+.claude/settings.local.json
+node_modules/
+*.log
