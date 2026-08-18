@@ -137,10 +137,10 @@
 
     <!-- Hero Section with Background Video -->
     <section class="relative min-h-[100svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden hero-section">
-        <video autoplay loop muted playsinline 
+        <video id="hero-video" autoplay loop muted playsinline 
                class="absolute inset-0 w-full h-full object-cover z-0"
                style="object-position: center 30%;">
-            <source src="./Hero video.mp4" type="video/mp4">
+            <source id="hero-source" src="./Hero video.mp4" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-gradient-to-b from-navy-900/60 via-navy-900/30 to-navy-900 z-10"></div>
 
@@ -1215,6 +1215,26 @@
             const encoded = encodeURIComponent(text);
             window.open(`https://wa.me/8801716374977?text=${encoded}`, '_blank');
         }
+
+        // Hero video source switcher (mobile vs desktop)
+        const heroVideo = document.getElementById('hero-video');
+        const heroSource = document.getElementById('hero-source');
+        const MOBILE_VIDEO = './hero-mobile.mp4.mp4';
+        const DESKTOP_VIDEO = './Hero video.mp4';
+
+        function updateHeroVideo() {
+            const isMobile = window.innerWidth <= 768;
+            const currentSrc = heroSource.getAttribute('src');
+            const targetSrc = isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO;
+            if (currentSrc !== targetSrc) {
+                heroSource.setAttribute('src', targetSrc);
+                heroVideo.load();
+                heroVideo.play().catch(() => {});
+            }
+        }
+
+        updateHeroVideo();
+        window.addEventListener('resize', updateHeroVideo);
 
         // Set default minimum date for date picker to today
         document.addEventListener('DOMContentLoaded', () => {
