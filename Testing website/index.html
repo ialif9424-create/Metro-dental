@@ -131,7 +131,7 @@
                 <i data-lucide="x" class="w-5 h-5 hidden" id="menu-icon-close"></i>
             </button>
 
-            <div class="flex items-center gap-4">
+            <div class="hidden lg:flex items-center gap-4">
                 <a href="#appointment" 
                    class="px-6 py-3 rounded-full gold-glow-btn text-navy-900 font-bold text-sm flex items-center gap-2">
                     <i data-lucide="calendar" class="w-4 h-4"></i> Book Appointment
@@ -147,6 +147,9 @@
                 <a href="#appointment" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span> Book Appointment</a>
                 <a href="#reviews" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5">Reviews</a>
                 <a href="#contact" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2">Location</a>
+                <a href="tel:01716374977" class="mobile-menu-link mt-2 w-full px-5 py-3 rounded-full gold-glow-btn text-navy-900 font-bold text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="phone-call" class="w-4 h-4"></i> Call: 01716-374977
+                </a>
             </div>
         </div>
     </header>
@@ -1273,7 +1276,7 @@
         // Hero video source switcher (mobile vs desktop)
         const heroVideo = document.getElementById('hero-video');
         const heroSource = document.getElementById('hero-source');
-        const MOBILE_VIDEO = './hero-mobile-compressed.mp4';
+        const MOBILE_VIDEO = './mobile_hero.mp4';
         const DESKTOP_VIDEO = './Hero video.mp4';
 
         function setHeroVideo(src) {
