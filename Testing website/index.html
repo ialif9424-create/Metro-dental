@@ -126,11 +126,27 @@
                 <a href="#contact" class="hover:text-gold-400 transition-colors">Location</a>
             </nav>
 
+            <button id="mobile-menu-btn" class="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl glass-card border border-white/10 text-slate-200 hover:text-gold-400 hover:border-gold-500/40 transition-all" aria-label="Toggle menu">
+                <i data-lucide="menu" class="w-5 h-5" id="menu-icon-open"></i>
+                <i data-lucide="x" class="w-5 h-5 hidden" id="menu-icon-close"></i>
+            </button>
+
             <div class="flex items-center gap-4">
                 <a href="#appointment" 
                    class="px-6 py-3 rounded-full gold-glow-btn text-navy-900 font-bold text-sm flex items-center gap-2">
                     <i data-lucide="calendar" class="w-4 h-4"></i> Book Appointment
                 </a>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden glass-panel border-t border-white/10">
+            <div class="container mx-auto px-6 py-4 flex flex-col gap-3">
+                <a href="#about" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5">Dr. Mustak</a>
+                <a href="#services" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5">Specialties</a>
+                <a href="#appointment" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span> Book Appointment</a>
+                <a href="#reviews" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5">Reviews</a>
+                <a href="#contact" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2">Location</a>
             </div>
         </div>
     </header>
@@ -215,7 +231,7 @@
                 <div class="lg:col-span-5 relative reveal">
                     <div class="relative z-10 rounded-3xl p-3 glass-panel border border-gold-500/30 shadow-[0_20px_50px_rgba(7,15,30,0.8)] group">
                         <div class="rounded-2xl overflow-hidden relative">
-                            <img src="./doctors photo.png" alt="Dr. Md. Mustak Ahmed - Dental Surgeon" class="w-full h-[520px] object-cover object-top transform group-hover:scale-105 transition-transform duration-700">
+                            <img src="./doctors photo.png" alt="Dr. Md. Mustak Ahmed - Dental Surgeon" class="w-full h-[300px] sm:h-[400px] md:h-[520px] object-cover object-top transform group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-transparent opacity-80"></div>
                             
                             <!-- Bottom Image Overlay Card -->
@@ -1107,6 +1123,44 @@
     <script>
         lucide.createIcons();
 
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+
+        function toggleMobileMenu() {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                menuIconOpen.classList.add('hidden');
+                menuIconClose.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        document.querySelectorAll('.mobile-menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            });
+        });
+
+        // Close mobile menu on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+        });
+
         // Scroll Reveal Animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1219,19 +1273,26 @@
         // Hero video source switcher (mobile vs desktop)
         const heroVideo = document.getElementById('hero-video');
         const heroSource = document.getElementById('hero-source');
-        const MOBILE_VIDEO = './hero-mobile.mp4.mp4';
+        const MOBILE_VIDEO = './hero-mobile-compressed.mp4';
         const DESKTOP_VIDEO = './Hero video.mp4';
 
+        function setHeroVideo(src) {
+            heroSource.setAttribute('src', src);
+            heroVideo.load();
+            heroVideo.play().catch(() => {});
+        }
+
         function updateHeroVideo() {
-            const isMobile = window.innerWidth <= 768;
-            const currentSrc = heroSource.getAttribute('src');
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
             const targetSrc = isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO;
-            if (currentSrc !== targetSrc) {
-                heroSource.setAttribute('src', targetSrc);
-                heroVideo.load();
-                heroVideo.play().catch(() => {});
+            if (heroSource.getAttribute('src') !== targetSrc) {
+                setHeroVideo(targetSrc);
             }
         }
+
+        heroVideo.addEventListener('error', () => {
+            setHeroVideo(DESKTOP_VIDEO);
+        });
 
         updateHeroVideo();
         window.addEventListener('resize', updateHeroVideo);
