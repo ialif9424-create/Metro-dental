@@ -147,25 +147,16 @@
                 <a href="#appointment" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span> Book Appointment</a>
                 <a href="#reviews" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2 border-b border-white/5">Reviews</a>
                 <a href="#contact" class="mobile-menu-link text-sm font-medium text-slate-300 hover:text-gold-400 transition-colors py-2">Location</a>
-                <a href="tel:01716374977" class="mobile-menu-link mt-2 w-full px-5 py-3 rounded-full gold-glow-btn text-navy-900 font-bold text-sm flex items-center justify-center gap-2">
-                    <i data-lucide="phone-call" class="w-4 h-4"></i> Call: 01716-374977
-                </a>
             </div>
         </div>
     </header>
 
     <!-- Hero Section with Background Video -->
-    <section class="relative min-h-[100svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden hero-section bg-[url('./doctors photo.png')] bg-cover bg-center">
-        <video id="hero-video-desktop" autoplay loop muted playsinline preload="auto" 
-               class="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
+    <section class="relative min-h-[100svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden hero-section">
+        <video id="hero-video" autoplay loop muted playsinline 
+               class="absolute inset-0 w-full h-full object-cover z-0"
                style="object-position: center 30%;">
-            <source src="./Hero video.mp4" type="video/mp4">
-        </video>
-        <video id="hero-video-mobile" autoplay loop muted playsinline preload="auto" webkit-playsinline
-               class="absolute inset-0 w-full h-full object-cover z-0 md:hidden"
-               style="object-position: center 20%; transform: scale(1.1);"
-               poster="./doctors photo.png">
-            <source src="./mobile_hero.mp4" type="video/mp4">
+            <source id="hero-source" src="./Hero video.mp4" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-gradient-to-b from-navy-900/60 via-navy-900/30 to-navy-900 z-10"></div>
 
@@ -240,7 +231,7 @@
                 <div class="lg:col-span-5 relative reveal">
                     <div class="relative z-10 rounded-3xl p-3 glass-panel border border-gold-500/30 shadow-[0_20px_50px_rgba(7,15,30,0.8)] group">
                         <div class="rounded-2xl overflow-hidden relative">
-                            <img src="./doctors photo.png" alt="Dr. Md. Mustak Ahmed - Dental Surgeon" class="w-full h-[300px] sm:h-[400px] md:h-[520px] object-cover object-top transform group-hover:scale-105 transition-transform duration-700">
+                            <img src="./doctors photo.png" alt="Dr. Md. Mustak Ahmed - Dental Surgeon" class="w-full h-[520px] object-cover object-top transform group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-transparent opacity-80"></div>
                             
                             <!-- Bottom Image Overlay Card -->
@@ -1132,44 +1123,6 @@
     <script>
         lucide.createIcons();
 
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIconOpen = document.getElementById('menu-icon-open');
-        const menuIconClose = document.getElementById('menu-icon-close');
-
-        function toggleMobileMenu() {
-            const isHidden = mobileMenu.classList.contains('hidden');
-            if (isHidden) {
-                mobileMenu.classList.remove('hidden');
-                menuIconOpen.classList.add('hidden');
-                menuIconClose.classList.remove('hidden');
-            } else {
-                mobileMenu.classList.add('hidden');
-                menuIconOpen.classList.remove('hidden');
-                menuIconClose.classList.add('hidden');
-            }
-        }
-
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-
-        document.querySelectorAll('.mobile-menu-link').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                menuIconOpen.classList.remove('hidden');
-                menuIconClose.classList.add('hidden');
-            });
-        });
-
-        // Close mobile menu on window resize to desktop
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) {
-                mobileMenu.classList.add('hidden');
-                menuIconOpen.classList.remove('hidden');
-                menuIconClose.classList.add('hidden');
-            }
-        });
-
         // Scroll Reveal Animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1279,58 +1232,62 @@
             window.open(`https://wa.me/8801716374977?text=${encoded}`, '_blank');
         }
 
-        // Hero video fallback handling
-        const heroMobileVideo = document.getElementById('hero-video-mobile');
-        const heroDesktopVideo = document.getElementById('hero-video-desktop');
+        // Hero video source switcher (mobile vs desktop)
+        const heroVideo = document.getElementById('hero-video');
+        const heroSource = document.getElementById('hero-source');
+        const MOBILE_VIDEO = './hero-mobile-compressed.mp4';
+        const DESKTOP_VIDEO = './Hero video.mp4';
 
-        function hideVideoAndUseFallback(video) {
-            video.style.opacity = '0';
-            video.style.transition = 'opacity 0.5s ease';
-            setTimeout(() => {
-                video.style.display = 'none';
-            }, 500);
-        }
-
-        function setupVideoFallback(video) {
-            let playAttempts = 0;
-            const maxAttempts = 3;
-
-            function attemptPlay() {
-                playAttempts++;
-                const promise = video.play();
-                if (promise !== undefined) {
-                    promise.catch(() => {
-                        if (playAttempts < maxAttempts) {
-                            setTimeout(attemptPlay, 500);
-                        } else {
-                            hideVideoAndUseFallback(video);
-                        }
-                    });
-                }
+        function updateHeroVideo() {
+            const isMobile = window.innerWidth <= 768;
+            const currentSrc = heroSource.getAttribute('src');
+            const targetSrc = isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO;
+            if (currentSrc !== targetSrc) {
+                heroSource.setAttribute('src', targetSrc);
+                heroVideo.load();
+                heroVideo.play().catch(() => {});
             }
-
-            video.addEventListener('loadeddata', attemptPlay);
-            video.addEventListener('canplay', attemptPlay);
-
-            video.addEventListener('error', () => {
-                hideVideoAndUseFallback(video);
-            });
-
-            video.addEventListener('stalled', () => {
-                setTimeout(() => {
-                    if (video.readyState < 3) {
-                        hideVideoAndUseFallback(video);
-                    }
-                }, 3000);
-            });
-
-        if (heroMobileVideo) {
-            setupVideoFallback(heroMobileVideo);
         }
 
-        if (heroDesktopVideo) {
-            setupVideoFallback(heroDesktopVideo);
+        updateHeroVideo();
+        window.addEventListener('resize', updateHeroVideo);
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+
+        function toggleMobileMenu() {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                menuIconOpen.classList.add('hidden');
+                menuIconClose.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
         }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        document.querySelectorAll('.mobile-menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            }
+        });
 
         // Set default minimum date for date picker to today
         document.addEventListener('DOMContentLoaded', () => {
