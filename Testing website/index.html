@@ -1324,13 +1324,6 @@
                 }, 3000);
             });
 
-            setTimeout(() => {
-                if (video.readyState < 2 && playAttempts === 0) {
-                    hideVideoAndUseFallback(video);
-                }
-            }, 4000);
-        }
-
         if (heroMobileVideo) {
             setupVideoFallback(heroMobileVideo);
         }
