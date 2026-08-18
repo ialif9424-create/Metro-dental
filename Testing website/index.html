@@ -156,14 +156,16 @@
 
     <!-- Hero Section with Background Video -->
     <section class="relative min-h-[100svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden hero-section">
-        <video id="hero-video-desktop" autoplay loop muted playsinline 
+        <video id="hero-video-desktop" autoplay loop muted playsinline preload="auto" 
                class="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
-               style="object-position: center 30%;">
+               style="object-position: center 30%;"
+               poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Crect width='1920' height='1080' fill='%23070F1E'/%3E%3C/svg%3E">
             <source src="./Hero video.mp4" type="video/mp4">
         </video>
-        <video id="hero-video-mobile" autoplay loop muted playsinline 
+        <video id="hero-video-mobile" autoplay loop muted playsinline preload="auto" webkit-playsinline
                class="absolute inset-0 w-full h-full object-cover z-0 md:hidden"
-               style="object-position: center 20%; transform: scale(1.1);">
+               style="object-position: center 20%; transform: scale(1.1);"
+               poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='1200'%3E%3Crect width='800' height='1200' fill='%23070F1E'/%3E%3C/svg%3E">
             <source src="./mobile_hero.mp4" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-gradient-to-b from-navy-900/60 via-navy-900/30 to-navy-900 z-10"></div>
@@ -1276,6 +1278,35 @@
 
             const encoded = encodeURIComponent(text);
             window.open(`https://wa.me/8801716374977?text=${encoded}`, '_blank');
+        }
+
+        // Hero video fallback handling
+        const heroMobileVideo = document.getElementById('hero-video-mobile');
+        const heroDesktopVideo = document.getElementById('hero-video-desktop');
+
+        function handleVideoError(video, fallbackSrc) {
+            video.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.className = 'absolute inset-0 w-full h-full bg-navy-900 z-0';
+            video.parentElement.insertBefore(fallback, video);
+        }
+
+        if (heroMobileVideo) {
+            heroMobileVideo.addEventListener('error', () => {
+                handleVideoError(heroMobileVideo, './Hero video.mp4');
+            });
+            heroMobileVideo.addEventListener('loadeddata', () => {
+                heroMobileVideo.play().catch(() => {});
+            });
+        }
+
+        if (heroDesktopVideo) {
+            heroDesktopVideo.addEventListener('error', () => {
+                handleVideoError(heroDesktopVideo);
+            });
+            heroDesktopVideo.addEventListener('loadeddata', () => {
+                heroDesktopVideo.play().catch(() => {});
+            });
         }
 
         // Set default minimum date for date picker to today
